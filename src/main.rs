@@ -1,3 +1,4 @@
+use std::env;
 use std::io::Write;
 use std::{cmp::Ordering, io};
 
@@ -119,20 +120,20 @@ impl Timestamps {
     }
 }
 
-// Todo: this should be options instead of prompts
 fn gather_input() -> NaiveTime {
-    println!(" Please enter sunrise time");
-    let mut sunrise = String::new();
     let min_wakeup_time = NaiveTime::parse_from_str(MIN_WAKEUP_TIME, "%H:%M").unwrap();
     let max_wakeup_time = NaiveTime::parse_from_str(MAX_WAKEUP_TIME, "%H:%M").unwrap();
-    match io::stdin().read_line(&mut sunrise) {
-        Ok(_) => {
-            sunrise = sunrise.replace("\n", "");
-            let sunrise = NaiveTime::parse_from_str(sunrise.as_str(), "%H:%M")
-                .expect("The given input string has the wrong format. HH:MM expected");
-            return sunrise.clamp(min_wakeup_time, max_wakeup_time);
-        }
-        Err(_) => panic!("wrong input"),
+    if env::args().len() == 2 {
+        NaiveTime::parse_from_str(
+            env::args().collect::<Vec<String>>()[1]
+                .replace("\n", "")
+                .as_str(),
+            "%H:%M",
+        )
+        .expect("Wrong parameter. Expected time string.")
+        .clamp(min_wakeup_time, max_wakeup_time)
+    } else {
+        panic!("Wrong time format. Expected %H:%M (9:47) as first arg.")
     }
 }
 

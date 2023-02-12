@@ -7,5 +7,4 @@ authors = ["Jonas Focke <johndoe@example.com>"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-colored = "2"
 chrono = "0.4.23"
