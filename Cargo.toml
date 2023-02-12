@@ -8,3 +8,4 @@ authors = ["Jonas Focke <johndoe@example.com>"]
 
 [dependencies]
 chrono = "0.4.23"
+soloud = "1.0.2"

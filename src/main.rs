@@ -1,6 +1,7 @@
+use soloud::*;
+use std::cmp::Ordering;
 use std::env;
 use std::io::Write;
-use std::{cmp::Ordering, io};
 
 use chrono::{format, Local, NaiveTime};
 
@@ -51,7 +52,7 @@ struct Timestamps {
     optimal_sport_time: TimestampType,
     bed_time: TimestampType,
     optimal_evening_dinner_time: TimestampType,
-    sunrise: TimestampType,
+    _sunrise: TimestampType,
 }
 
 impl Timestamps {
@@ -137,11 +138,25 @@ fn gather_input() -> NaiveTime {
     }
 }
 
+fn alert() {
+    let sl = Soloud::default().unwrap();
+    let mut wav = audio::Wav::default();
+    wav.load_mem(include_bytes!("../audio.mp3")).unwrap();
+    sl.play(&wav);
+}
+
 fn countdown_next_events(timestamps: Timestamps) {
     loop {
         let upcomming = timestamps.get_upcomming_timestamp();
         let now = Local::now().time();
         let diff_to_upcomming = timestamps.get_abs_time_diff(now, upcomming.get_naive_time());
+        if diff_to_upcomming.num_hours() == 0
+            && diff_to_upcomming.num_minutes() == 10
+            && diff_to_upcomming.num_seconds() == 0
+        {
+            alert();
+            std::thread::sleep(std::time::Duration::from_secs(10));
+        }
         print!(
             "{}",
             format!(
